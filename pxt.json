@@ -2,7 +2,11 @@
     "name": "Dance rhythm game",
     "description": "",
     "dependencies": {
-        "device": "*"
+        "device": "*",
+        "storyboard": "*",
+        "arcade-text": "github:microsoft/arcade-text#v1.3.0",
+        "tilemaps": "github:microsoft/pxt-tilemaps#v1.11.0",
+        "arcade-story": "github:microsoft/arcade-storytelling#v1.0.1"
     },
     "files": [
         "main.blocks",

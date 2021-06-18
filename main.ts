@@ -1,6 +1,26 @@
 namespace SpriteKind {
     export const Arrow = SpriteKind.create()
 }
+sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Arrow, function (dancer, arrow) {
+    info.changeLifeBy(-1)
+    arrow.destroy(effects.disintegrate, 250)
+})
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    dancer.x = arrowX[1]
+    dancer.setFlag(SpriteFlag.Ghost, false)
+})
+controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+    dancer.x = arrowX[0]
+    dancer.setFlag(SpriteFlag.Ghost, false)
+})
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    dancer.x = arrowX[3]
+    dancer.setFlag(SpriteFlag.Ghost, false)
+})
+controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
+    dancer.x = arrowX[2]
+    dancer.setFlag(SpriteFlag.Ghost, false)
+})
 function setUpStopper () {
     stopper = sprites.create(img`
         1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
@@ -39,17 +59,27 @@ function setUpDancer () {
         . . . f f f f f f f f f f . . . 
         . . . . . f f . . f f . . . . . 
         `, SpriteKind.Player)
-    dancer.setPosition(80, 107)
+    dancer.y = 107
+    dancer.x = arrowX[1]
 }
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Arrow, function (dancer, arrow) {
+    info.changeScoreBy(100)
+    arrow.destroy(effects.coolRadial, 250)
+})
 function makeArrow () {
     randomArrowNum = randint(0, arrowImgs.length - 1)
     arrow = sprites.create(arrowImgs.get(randomArrowNum), SpriteKind.Arrow)
+    arrow.y = 0
+    arrow.vy = 70
+    arrow.x = arrowX[randomArrowNum]
 }
 let arrow: Sprite = null
-let dancer: Sprite = null
 let stopper: Sprite = null
+let dancer: Sprite = null
+let arrowX: number[] = []
 let arrowImgs: Image[] = []
 let randomArrowNum: number = null
+arrowX = [35, 65, 95, 125]
 scene.setBackgroundImage(img`
     ................................................................................................................................................................
     ................................................................................................................................................................
@@ -242,8 +272,20 @@ arrowImgs = [img`
     6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
     6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
     `]
+info.setScore(0)
+info.setLife(10)
+game.splash("DANCE!")
+game.showLongText("Drag the joystick in the direction of the arrows! Don't let one hit the ground!", DialogLayout.Bottom)
 setUpStopper()
 setUpDancer()
+forever(function () {
+    music.playMelody("E B C5 A B G A F ", 110)
+    music.playMelody("B A G A G F A C5 ", 110)
+    music.playMelody("G F G A - F E D ", 110)
+    music.playMelody("C5 G B A F A C5 B ", 110)
+    music.playMelody("G B A G C5 B A B ", 110)
+})
 game.onUpdateInterval(500, function () {
     makeArrow()
+    dancer.setFlag(SpriteFlag.Ghost, true)
 })
